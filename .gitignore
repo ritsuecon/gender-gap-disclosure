@@ -1,0 +1,21 @@
+# data (大きいので追跡しない)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# 生成物
+reports/figures/*.png
+reports/*.md
+!reports/.gitkeep
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ipynb_checkpoints/
+build/
+dist/
+.DS_Store

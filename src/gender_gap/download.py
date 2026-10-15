@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import re
 import shutil
+import ssl
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -28,6 +30,16 @@ def _filename_from_headers(headers, fallback: str) -> str:
     return m.group(1) if m else fallback
 
 
+def _ssl_context() -> ssl.SSLContext:
+    """python.org 配布の Python は OS の証明書ストアを見ないことがあるため certifi を優先する。"""
+    try:
+        import certifi
+
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:  # pragma: no cover
+        return ssl.create_default_context()
+
+
 def download(dataset: str | int = "全体版", bom: bool = True, out_dir: Path = RAW_DIR, force: bool = False) -> Path:
     """ZIP をダウンロードして保存先パスを返す。既存ファイルがあれば再利用する。"""
     code = resolve_code(dataset)
@@ -35,7 +47,16 @@ def download(dataset: str | int = "全体版", bom: bool = True, out_dir: Path =
     out_dir.mkdir(parents=True, exist_ok=True)
 
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=120) as resp:
+    try:
+        resp_cm = urllib.request.urlopen(req, timeout=120, context=_ssl_context())
+    except urllib.error.URLError as exc:
+        if "CERTIFICATE_VERIFY_FAILED" in str(exc):
+            raise RuntimeError(
+                "SSL 証明書の検証に失敗しました。`pip install certifi` するか、"
+                "python.org 版 Python なら /Applications/Python 3.x/Install Certificates.command を実行してください。"
+            ) from exc
+        raise
+    with resp_cm as resp:
         ctype = resp.headers.get("Content-Type", "")
         if "octet-stream" not in ctype and "zip" not in ctype:
             raise RuntimeError(f"ZIP ではない応答を受信しました: {url} Content-Type={ctype}")

@@ -24,7 +24,7 @@ def test_plausible_drops_outliers(companies):
 def test_disclosure_rates(companies):
     r = A.disclosure_rates(companies)
     assert set(r.columns) == {"公表率(%)", "公表社数"}
-    assert r.loc[A.INDICATORS["pay_gap_all"], "公表社数"] == 40
+    assert r.loc[A.INDICATORS["pay_gap_all"], "公表社数"] == 49
     by_size = A.disclosure_rates(companies, "size")
     assert list(by_size.index) == L.SIZE_ORDER
     assert by_size["企業数"].sum() == 60

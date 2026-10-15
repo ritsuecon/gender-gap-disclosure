@@ -66,6 +66,7 @@ COLUMN_MAP: dict[str, str] = {
     "14.男女の賃金の差異1-全労働者(%)": "pay_gap_all",
     "14.男女の賃金の差異2-うち正規雇用労働者(%)": "pay_gap_regular",
     "14.男女の賃金の差異3-うち非正規雇用労働者(%)": "pay_gap_nonregular",
+    "14.男女の賃金の差異 注釈・説明": "pay_gap_note",
     "14.対象期間": "pay_gap_period",
     "15.データの対象-データの対象": "data_scope",
     "16.データ集計時点-データ集計時点": "data_asof",
@@ -183,6 +184,9 @@ def build_companies(raw: pd.DataFrame) -> pd.DataFrame:
         df[c] = df[c].notna()
     df["n_systems"] = df[SYSTEM_COLS].sum(axis=1)
     df["tenure_gap_years"] = df["tenure_male"] - df["tenure_female"]
+    # 賃金差異がちょうど 100 の企業（バンチング分析用フラグ）
+    for c in ["pay_gap_all", "pay_gap_regular", "pay_gap_nonregular"]:
+        df[f"{c}_is100"] = df[c].eq(100.0)
     df["last_updated"] = pd.to_datetime(df["last_updated"], format="%Y年%m月%d日", errors="coerce")
     return df
 

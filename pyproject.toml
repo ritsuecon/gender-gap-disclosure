@@ -13,6 +13,7 @@ dependencies = [
     "pandas>=2.0",
     "pyarrow>=14",
     "matplotlib>=3.7",
+    "certifi",
 ]
 
 [project.optional-dependencies]

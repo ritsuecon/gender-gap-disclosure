@@ -46,14 +46,16 @@ def cmd_build(args) -> None:
 
 
 def cmd_analyze(args) -> Path:
-    from .report import build_report
+    from .report import build_bunching_report, build_report
 
     companies, kubun = L.load_processed()
     src = PROCESSED_DIR / "SOURCE"
     source_date = src.read_text().splitlines()[1] if src.exists() else None
+    out_b = build_bunching_report(companies, source_date or None)
+    print(f"report (main): {out_b}")
     out = build_report(companies, kubun, source_date or None)
     print(f"report: {out}")
-    return out
+    return out_b
 
 
 def cmd_all(args) -> None:
@@ -81,7 +83,7 @@ def build_parser() -> argparse.ArgumentParser:
     sp = sub.add_parser("download", help="ZIP をダウンロード"); add_download_opts(sp); sp.set_defaults(func=cmd_download)
     sp = sub.add_parser("extract", help="ZIP を解凍"); add_extract_opts(sp); sp.set_defaults(func=cmd_extract)
     sp = sub.add_parser("build", help="CSV を整形して parquet に保存"); add_build_opts(sp); sp.set_defaults(func=cmd_build)
-    sp = sub.add_parser("analyze", help=f"レポートを {REPORT_DIR} に生成"); sp.set_defaults(func=cmd_analyze)
+    sp = sub.add_parser("analyze", help=f"レポート（bunching.md, report.md）を {REPORT_DIR} に生成"); sp.set_defaults(func=cmd_analyze)
     sp = sub.add_parser("all", help="download → extract → build → analyze")
     add_download_opts(sp); add_extract_opts(sp); add_build_opts(sp); sp.set_defaults(func=cmd_all)
     return p

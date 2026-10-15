@@ -11,7 +11,7 @@
 
 男女の賃金の差異（男性=100 としたときの女性賃金）は実績の平均比なので小数になるはずですが、
 公表値は **100.0 ちょうど** にスパイク状に集中しています（2026-10-16 時点で 636 社、近傍密度の約 6 倍）。
-`gender-gap analyze` が生成する `reports/bunching.md` で、
+結果は **[reports/bunching.md](reports/bunching.md)** にあります（`gender-gap analyze` で再生成）。内容は
 
 - スパイクの大きさと他のキリ番（70, 80 など）との比較
 - 100 と答えた企業の規模・業種・上場区分
@@ -19,7 +19,7 @@
 - 注釈欄の文言分類（「性別による差はつけていない」等、制度上の差の有無と誤解した疑い）
 - ちょうど 100 を除外した場合の統計の変化
 
-を扱います。分析ロジックは [bunching.py](src/gender_gap/bunching.py)、
+です。分析ロジックは [bunching.py](src/gender_gap/bunching.py)、
 `companies.parquet` には `pay_gap_all_is100` などのフラグ列があり感度分析に使えます。
 
 ## セットアップ

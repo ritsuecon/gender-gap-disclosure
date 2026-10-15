@@ -4,9 +4,11 @@ data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 
-# 生成物
+# 生成物（バンチング分析の結果のみ追跡する）
 reports/figures/*.png
+!reports/figures/bunch_*.png
 reports/*.md
+!reports/bunching.md
 !reports/.gitkeep
 
 # python
